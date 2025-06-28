@@ -2,6 +2,8 @@
 
 Plataforma frontend de quiz.
 
+p/ estudar pode ler o [arquivo markdown de contéudo](content.md)
+
 ## Para rodar
 
 ```
