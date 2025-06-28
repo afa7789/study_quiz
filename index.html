@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Flashcards</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Quiz de Flashcards</h1>
+    </header>
+
+    <main class="quiz-container">
+        <section id="setup-section" class="quiz-section">
+            <h2>Configurações do Quiz</h2>
+            <div class="input-group">
+                <label for="flashcard-file">Carregar Flashcards (JSON):</label>
+                <input type="file" id="flashcard-file" accept=".json">
+            </div>
+            <div class="input-group">
+                <label for="num-questions">Número de Perguntas (0 para todas):</label>
+                <input type="number" id="num-questions" value="5" min="0">
+            </div>
+            <button id="start-quiz-btn">Iniciar Quiz</button>
+        </section>
+
+        <section id="quiz-section" class="quiz-section hidden">
+            <div class="quiz-header">
+                <span id="question-counter">Pergunta 1/X</span>
+                <span id="timer">Tempo: 00:00</span>
+            </div>
+            <div class="flashcard-card">
+                <h3 id="flashcard-question">Carregando pergunta...</h3>
+                <div class="flashcard-options" id="flashcard-options">
+                    </div>
+            </div>
+            <div class="quiz-navigation">
+                <button id="next-question-btn" disabled>Próxima Pergunta</button>
+            </div>
+        </section>
+
+        <section id="results-section" class="quiz-section hidden">
+            <h2>Resultados do Quiz</h2>
+            <p>Acertos: <span id="correct-answers-count">0</span></p>
+            <p>Tempo Total: <span id="total-time">00:00</span></p>
+            <p>Tempo Médio por Pergunta: <span id="average-time">00:00</span></p>
+            <h3>Perguntas Erradas:</h3>
+            <ul id="wrong-questions-list">
+                </ul>
+            <button id="restart-quiz-btn">Reiniciar Quiz</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

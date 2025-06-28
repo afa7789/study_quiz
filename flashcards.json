@@ -1,0 +1,1124 @@
+[
+  {
+    "numero": "1",
+    "pergunta": "O que é Separação de Lógica e Dados em contratos inteligentes?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Dividir contrato em armazenamento e lógica para facilitar upgrades mantendo estado.",
+      "B": "Juntar lógica e dados num único contrato para simplificar.",
+      "C": "Separar contratos por função sem manter dados persistentes.",
+      "D": "Usar apenas contratos proxy sem lógica própria."
+    }
+  },
+  {
+    "numero": "2",
+    "pergunta": "Qual o padrão de upgradeability que mantém a lógica de upgrade no próprio contrato?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Transparent Proxy",
+      "B": "UUPS Proxy",
+      "C": "Diamond Proxy",
+      "D": "EIP-1167 Clones"
+    }
+  },
+  {
+    "numero": "3",
+    "pergunta": "O que são Factory Contracts e Clone Patterns?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Contratos que atualizam automaticamente sem proxy.",
+      "B": "Contratos que armazenam dados fora da blockchain.",
+      "C": "Factory cria contratos dinamicamente; clones criam proxies minimalistas.",
+      "D": "Contratos que não permitem upgrades."
+    }
+  },
+  {
+    "numero": "4",
+    "pergunta": "Qual a prática para otimizar layout de armazenamento em contratos?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Usar somente arrays grandes para todos dados.",
+      "B": "Armazenar variáveis booleanas primeiro.",
+      "C": "Separar dados em vários contratos sem conexão.",
+      "D": "Agrupar variáveis do mesmo tipo para packing e usar mappings quando possível."
+    }
+  },
+  {
+    "numero": "5",
+    "pergunta": "O que significa Dependency Injection em smart contracts?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Reescrever contratos toda vez que mudar lógica.",
+      "B": "Passar contratos como parâmetros para modularidade e testes.",
+      "C": "Incluir todos contratos dentro de um único arquivo.",
+      "D": "Evitar comunicação entre contratos."
+    }
+  },
+  {
+    "numero": "6",
+    "pergunta": "Qual a finalidade do Lifecycle Management em contratos?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Eliminar totalmente a possibilidade de upgrades.",
+      "B": "Criar múltiplos contratos idênticos.",
+      "C": "Gerenciar inicialização, pausabilidade e autodestruição do contrato.",
+      "D": "Controlar apenas o acesso dos usuários."
+    }
+  },
+  {
+    "numero": "7",
+    "pergunta": "Como evitar ataques de reentrância em contratos?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Usar Checks-Effects-Interactions e reentrancy guards.",
+      "B": "Deixar funções abertas para qualquer chamada.",
+      "C": "Usar loops infinitos para bloquear transações.",
+      "D": "Desabilitar transferências de ETH."
+    }
+  },
+  {
+    "numero": "8",
+    "pergunta": "Qual padrão de controle de acesso permite múltiplos papéis diferentes?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Ownable",
+      "B": "Multisig",
+      "C": "Role-Based Access Control (RBAC)",
+      "D": "Circuit Breaker"
+    }
+  },
+  {
+    "numero": "9",
+    "pergunta": "Para que serve o padrão Circuit Breaker em contratos?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Gerenciar atualizações automáticas do contrato.",
+      "B": "Permitir que qualquer usuário pause o contrato.",
+      "C": "Aumentar a velocidade das transações.",
+      "D": "Pausar funcionalidades críticas em emergências."
+    }
+  },
+  {
+    "numero": "10",
+    "pergunta": "Qual técnica ajuda a mitigar ataques de front-running?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Usar só funções view/pure.",
+      "B": "Commit-reveal e leilões de gas.",
+      "C": "Aumentar o tamanho dos arrays.",
+      "D": "Remover fallback functions."
+    }
+  },
+  {
+    "numero": "11",
+    "pergunta": "Qual dessas é uma boa prática para otimização de gás?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Usar storage em vez de memory para tudo.",
+      "B": "Evitar usar funções view e pure.",
+      "C": "Evitar loops grandes e usar calldata para arrays.",
+      "D": "Fazer todas as operações em um único bloco."
+    }
+  },
+  {
+    "numero": "12",
+    "pergunta": "O que é o padrão Pull over Push em pagamentos de contratos?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Usuário faz withdraw manual para evitar falhas de pagamento automáticas.",
+      "B": "Contrato envia ETH automaticamente para usuário.",
+      "C": "Evitar pagamentos em ETH e usar tokens apenas.",
+      "D": "Deixar pagamentos abertos para qualquer endereço."
+    }
+  },
+  {
+    "numero": "13",
+    "pergunta": "Quando é melhor usar eventos ao invés de armazenamento em contrato?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Para armazenar dados críticos para a lógica do contrato.",
+      "B": "Para registrar histórico e logs com menor custo de gas.",
+      "C": "Para guardar saldo dos usuários.",
+      "D": "Para substituir variáveis de estado."
+    }
+  },
+  {
+    "numero": "14",
+    "pergunta": "Qual a função da fallback function em contratos Solidity?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Gerar novas funções automaticamente.",
+      "B": "Validar assinaturas off-chain.",
+      "C": "Atualizar o contrato para nova versão.",
+      "D": "Capturar chamadas para funções inexistentes ou receber ETH com calldata."
+    }
+  },
+  {
+    "numero": "15",
+    "pergunta": "O que o padrão EIP-1967 define em proxies?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Usar eventos para registrar upgrades.",
+      "B": "Criar múltiplos proxies para um contrato.",
+      "C": "Slots fixos de storage para endereço de implementação evitando colisões.",
+      "D": "Assinar mensagens off-chain para autorizar upgrades."
+    }
+  },
+  {
+    "numero": "16",
+    "pergunta": "Quando usar o padrão ERC-1155?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Para tokens fungíveis simples como moedas.",
+      "B": "Para tokens multi-token que podem ser fungíveis e não fungíveis.",
+      "C": "Para NFTs únicos apenas.",
+      "D": "Para contratos proxy."
+    }
+  },
+  {
+    "numero": "17",
+    "pergunta": "Para que serve o EIP-712?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Criar mensagens assinadas off-chain estruturadas para validação on-chain.",
+      "B": "Padronizar tokens fungíveis.",
+      "C": "Gerenciar pausabilidade do contrato.",
+      "D": "Proteger contra reentrância."
+    }
+  },
+  {
+    "numero": "18",
+    "pergunta": "Qual benefício o EIP-2612 traz para tokens ERC-20?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Aumentar limite de tokens emitidos.",
+      "B": "Permitir transferências sem gas.",
+      "C": "Criar novos papéis de acesso.",
+      "D": "Aprovar allowances via assinatura off-chain, evitando chamadas on-chain."
+    }
+  },
+  {
+    "numero": "19",
+    "pergunta": "Qual é a função do modifier 'onlyOwner' no controle de acesso?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Permitir que qualquer usuário execute a função.",
+      "B": "Restringir o acesso da função ao dono do contrato.",
+      "C": "Permitir acesso apenas em pausas do contrato.",
+      "D": "Bloquear todas as chamadas externas."
+    }
+  },
+  {
+    "numero": "20",
+    "pergunta": "O que acontece quando um contrato usa 'selfdestruct'?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "O contrato atualiza sua lógica automaticamente.",
+      "B": "O contrato envia ETH para qualquer endereço aleatório.",
+      "C": "O contrato é destruído e envia saldo para um endereço especificado.",
+      "D": "O contrato congela todas as operações indefinidamente."
+    }
+  },
+  {
+    "numero": "21",
+    "pergunta": "Qual é a vantagem do padrão Diamond Proxy?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Permite modularizar contratos em múltiplos facets para facilitar upgrades.",
+      "B": "Remove completamente a necessidade de proxies.",
+      "C": "Armazena dados fora da blockchain para reduzir gas.",
+      "D": "Executa funções automaticamente sem chamadas externas."
+    }
+  },
+  {
+    "numero": "22",
+    "pergunta": "O que significa 'packing' em otimização de armazenamento?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Separar dados em múltiplos contratos.",
+      "B": "Usar somente arrays para armazenamento.",
+      "C": "Agrupar variáveis menores para ocupar menos espaço de storage.",
+      "D": "Converter variáveis para strings para melhor leitura."
+    }
+  },
+  {
+    "numero": "23",
+    "pergunta": "O que é um reentrancy guard?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Uma função para acelerar transações.",
+      "B": "Um mecanismo para evitar chamadas recursivas que causam reentrância.",
+      "C": "Um contrato que armazena múltiplos proxies.",
+      "D": "Um padrão para dividir storage e lógica."
+    }
+  },
+  {
+    "numero": "24",
+    "pergunta": "Qual a diferença entre Ownable e Multisig no controle de acesso?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Ownable é para múltiplos donos, Multisig para um único dono.",
+      "B": "Multisig controla permissões por papéis, Ownable não.",
+      "C": "Ownable é um padrão multisig avançado.",
+      "D": "Ownable tem um dono único, Multisig requer múltiplas assinaturas."
+    }
+  },
+  {
+    "numero": "25",
+    "pergunta": "O que são meta-transactions?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Transações onde outra pessoa paga o gas por você usando assinaturas off-chain.",
+      "B": "Transações que só podem ser executadas pelo dono do contrato.",
+      "C": "Transações que atualizam automaticamente o contrato.",
+      "D": "Transações que são revertidas automaticamente em caso de erro."
+    }
+  },
+  {
+    "numero": "26",
+    "pergunta": "Quando usar fallback em vez de receive em um contrato?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Quando quiser receber ETH sem calldata.",
+      "B": "Quando quiser definir funções externas.",
+      "C": "Quando receber chamadas com dados não correspondentes a nenhuma função.",
+      "D": "Nunca, fallback está obsoleto."
+    }
+  },
+  {
+    "numero": "27",
+    "pergunta": "O que é um Factory Contract?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Um contrato que destrói outros contratos.",
+      "B": "Um contrato que cria e gerencia outros contratos dinamicamente.",
+      "C": "Um contrato que armazena dados para outros contratos.",
+      "D": "Um padrão para otimização de gás."
+    }
+  },
+  {
+    "numero": "28",
+    "pergunta": "O que o modificador 'nonReentrant' faz em Solidity?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Permite que a função seja chamada várias vezes recursivamente.",
+      "B": "Evita que a função seja executada sem autorização.",
+      "C": "Aumenta a velocidade da função.",
+      "D": "Previne chamadas recursivas que podem causar reentrância."
+    }
+  },
+  {
+    "numero": "29",
+    "pergunta": "O que é um circuito breaker em contratos inteligentes?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Mecanismo para pausar funcionalidades do contrato em emergência.",
+      "B": "Sistema que dispara alarmes para desenvolvedores.",
+      "C": "Um tipo de contrato proxy.",
+      "D": "Uma biblioteca para melhorar segurança."
+    }
+  },
+  {
+    "numero": "30",
+    "pergunta": "Por que preferir 'calldata' em vez de 'memory' para parâmetros externos?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Porque 'memory' é somente para variáveis internas.",
+      "B": "Porque 'calldata' é mais barato em termos de gas para parâmetros externos.",
+      "C": "Porque 'calldata' permite alterar parâmetros dentro da função.",
+      "D": "Porque 'memory' é desativado em versões recentes do Solidity."
+    }
+  },
+  {
+    "numero": "31",
+    "pergunta": "O que o evento Transfer no ERC-20 representa?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "O minting de novos tokens.",
+      "B": "A aprovação de allowances.",
+      "C": "A movimentação de tokens entre endereços.",
+      "D": "A destruição de tokens."
+    }
+  },
+  {
+    "numero": "32",
+    "pergunta": "O que é o padrão EIP-1167?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Um padrão para pausabilidade de contratos.",
+      "B": "Um padrão para assinaturas off-chain.",
+      "C": "Um padrão para controle de acesso RBAC.",
+      "D": "Um padrão para proxies minimalistas (clones) que economizam gás."
+    }
+  },
+  {
+    "numero": "33",
+    "pergunta": "O que é o gas optimization com packing?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Agrupar variáveis para reduzir slots usados no storage.",
+      "B": "Usar constantes para todas variáveis.",
+      "C": "Evitar uso de storage completamente.",
+      "D": "Realizar todas operações fora da blockchain."
+    }
+  },
+  {
+    "numero": "34",
+    "pergunta": "Qual o problema do push payment e por que usar pull payment?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Push payment não permite múltiplos pagamentos.",
+      "B": "Push payment pode falhar e bloquear execução, pull evita isso com saques manuais.",
+      "C": "Pull payment é mais lento e custoso em gas.",
+      "D": "Push payment não funciona com tokens ERC-20."
+    }
+  },
+  {
+    "numero": "35",
+    "pergunta": "O que é o padrão Ownable?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Um padrão para tokens fungíveis.",
+      "B": "Um padrão para eventos em contratos.",
+      "C": "Um padrão simples para controle de acesso com um dono único.",
+      "D": "Um padrão para upgrade de contratos."
+    }
+  },
+  {
+    "numero": "36",
+    "pergunta": "O que é um evento em Solidity e qual seu custo comparado ao storage?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Evento é uma função especial com alto custo de gas.",
+      "B": "Evento é um log externo com custo muito menor que storage.",
+      "C": "Evento é uma variável de estado que guarda dados permanentes.",
+      "D": "Evento é um padrão de upgrade de contratos."
+    }
+  },
+  {
+    "numero": "37",
+    "pergunta": "Qual a diferença entre receive() e fallback() em Solidity?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "receive() é para chamadas sem valor e fallback para chamadas com valor.",
+      "B": "receive() é chamada para funções inexistentes, fallback para ETH sem dados.",
+      "C": "receive() e fallback() são a mesma função.",
+      "D": "receive() é chamada ao receber ETH sem calldata, fallback() para chamadas inválidas ou com calldata."
+    }
+  },
+  {
+    "numero": "38",
+    "pergunta": "Por que usar constantes e imutáveis para variáveis?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Para reduzir o custo de armazenamento e otimizar gas.",
+      "B": "Para permitir atualização dinâmica de valores.",
+      "C": "Para aumentar o tamanho do contrato.",
+      "D": "Para armazenar dados de usuário."
+    }
+  },
+  {
+    "numero": "39",
+    "pergunta": "O que faz o modificador 'initializer' em contratos upgradeáveis?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Evita pausas em funções críticas.",
+      "B": "Destrói o contrato após execução.",
+      "C": "Garante que a função init seja chamada uma única vez, pois proxies não usam construtor.",
+      "D": "Permite acesso livre a função."
+    }
+  },
+  {
+    "numero": "40",
+    "pergunta": "O que é a função 'delegatecall' em Solidity?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Executa função no endereço chamado e substitui armazenamento do chamado.",
+      "B": "Executa código de outro contrato, mas preserva o contexto (storage) do chamador.",
+      "C": "Copia dados entre contratos diferentes.",
+      "D": "Destrói o contrato destino."
+    }
+  },
+  {
+    "numero": "41",
+    "pergunta": "O que é um proxy transparente?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Proxy que separa chamadas entre dono e usuários comuns para evitar conflitos.",
+      "B": "Proxy que não permite upgrades.",
+      "C": "Proxy que copia dados entre múltiplos contratos.",
+      "D": "Proxy que armazena dados fora da blockchain."
+    }
+  },
+  {
+    "numero": "42",
+    "pergunta": "Qual o risco de não validar entradas em funções públicas?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Aumento do custo de gas.",
+      "B": "Impossibilidade de upgrades.",
+      "C": "Ataques de entrada inválida ou maliciosa comprometendo contrato.",
+      "D": "Contrato deixa de aceitar transações."
+    }
+  },
+  {
+    "numero": "43",
+    "pergunta": "Por que usar contratos modulares?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Para reduzir o número de contratos na rede.",
+      "B": "Para facilitar manutenção e upgrades específicos por módulo.",
+      "C": "Para impedir comunicação entre contratos.",
+      "D": "Para criar contratos imutáveis."
+    }
+  },
+  {
+    "numero": "44",
+    "pergunta": "O que é um 'mapping' em Solidity?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Um array que cresce dinamicamente.",
+      "B": "Uma variável booleana.",
+      "C": "Uma função de acesso externo.",
+      "D": "Um tipo de estrutura chave-valor para armazenamento."
+    }
+  },
+  {
+    "numero": "45",
+    "pergunta": "O que é gas refund e como pode ser obtido?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Reembolso de gas ao liberar storage usando 'selfdestruct' ou limpar storage.",
+      "B": "Bônus dado pelo minerador aleatoriamente.",
+      "C": "Taxa extra cobrada para acelerar transações.",
+      "D": "Desconto automático para contratos pequenos."
+    }
+  },
+  {
+    "numero": "46",
+    "pergunta": "Para que serve a função 'approve' no padrão ERC-20?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Transferir tokens para outro endereço.",
+      "B": "Criar tokens novos.",
+      "C": "Autorizar outro endereço a gastar tokens em seu nome.",
+      "D": "Destruir tokens."
+    }
+  },
+  {
+    "numero": "47",
+    "pergunta": "O que significa composability em contratos?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Contratos independentes que nunca interagem.",
+      "B": "Capacidade dos contratos de interagir e compor funcionalidades entre si.",
+      "C": "Contratos que não armazenam dados.",
+      "D": "Contratos com lógica fixa e imutável."
+    }
+  },
+  {
+    "numero": "48",
+    "pergunta": "Qual é o propósito de eventos em contratos inteligentes?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Registrar logs acessíveis off-chain para monitoramento e auditoria.",
+      "B": "Armazenar dados que modificam o estado do contrato.",
+      "C": "Executar funções em resposta a chamadas.",
+      "D": "Atualizar o endereço de implementação de um proxy."
+    }
+  },
+  {
+    "numero": "49",
+    "pergunta": "O que significa 'selfdestruct' em Solidity?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Função que bloqueia o contrato permanentemente.",
+      "B": "Função que reinicia o contrato automaticamente.",
+      "C": "Função que aumenta o saldo do contrato.",
+      "D": "Função que destrói o contrato e envia ETH remanescente."
+    }
+  },
+  {
+    "numero": "50",
+    "pergunta": "Qual é a utilidade do padrão EIP-1822 (Universal Upgradeable Proxy Standard)?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Gerenciar pausas em contratos.",
+      "B": "Criar tokens não fungíveis.",
+      "C": "Prover padrão para upgrade transparente e modular de proxies.",
+      "D": "Definir padrões para assinaturas off-chain."
+    }
+  },
+  {
+    "numero": "51",
+    "pergunta": "O que é um 'view' function em Solidity?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Função que não modifica o estado da blockchain.",
+      "B": "Função que destrói o contrato.",
+      "C": "Função que cria um novo contrato.",
+      "D": "Função que pausa o contrato."
+    }
+  },
+  {
+    "numero": "52",
+    "pergunta": "O que significa gas price?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Quantidade total de gás consumido pela transação.",
+      "B": "Valor pago por unidade de gás para mineradores.",
+      "C": "Quantidade máxima de gás permitida na transação.",
+      "D": "Número de tokens necessários para enviar ETH."
+    }
+  },
+  {
+    "numero": "53",
+    "pergunta": "Qual a importância da função 'constructor' em contratos Solidity?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Função para atualizar contrato após deploy.",
+      "B": "Função para destruir o contrato.",
+      "C": "Função para transferir ETH automaticamente.",
+      "D": "Função que inicializa variáveis e é executada apenas uma vez no deploy."
+    }
+  },
+  {
+    "numero": "54",
+    "pergunta": "Qual a diferença entre 'storage' e 'memory' em Solidity?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "'Storage' é persistente na blockchain, 'memory' é temporária para execução da função.",
+      "B": "'Storage' é temporário e 'memory' é permanente.",
+      "C": "'Storage' armazena variáveis locais, 'memory' armazena globais.",
+      "D": "'Storage' e 'memory' são sinônimos."
+    }
+  },
+  {
+    "numero": "55",
+    "pergunta": "O que é o padrão RBAC em contratos inteligentes?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Padrão para proxies de upgrade.",
+      "B": "Padrão para tokens ERC-20.",
+      "C": "Controle de acesso baseado em múltiplos papéis ou roles.",
+      "D": "Sistema de pausabilidade automática."
+    }
+  },
+  {
+    "numero": "56",
+    "pergunta": "O que faz o padrão EIP-712 facilitar?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Aprovações automáticas em contratos proxy.",
+      "B": "Assinaturas estruturadas off-chain para evitar replay attacks.",
+      "C": "Criação automática de NFTs.",
+      "D": "Atualização de contratos sem proxies."
+    }
+  },
+  {
+    "numero": "57",
+    "pergunta": "O que é a função 'approve' no ERC-20?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Autoriza outra conta a gastar tokens em seu nome.",
+      "B": "Transfere tokens diretamente para outro endereço.",
+      "C": "Destrói tokens existentes.",
+      "D": "Aumenta o supply de tokens."
+    }
+  },
+  {
+    "numero": "58",
+    "pergunta": "Qual a utilidade do padrão EIP-2612?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Permite pausabilidade automática em tokens.",
+      "B": "Define padrões para tokens não fungíveis.",
+      "C": "Permite aprovação de tokens via assinatura off-chain (permit).",
+      "D": "Cria proxies transparentes."
+    }
+  },
+  {
+    "numero": "59",
+    "pergunta": "Qual é o principal benefício de usar contratos clone (EIP-1167)?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Melhor segurança para contratos de tokens.",
+      "B": "Maior facilidade de atualização sem proxy.",
+      "C": "Permite múltiplos donos com facilidade.",
+      "D": "Economia significativa de gás ao criar múltiplas instâncias."
+    }
+  },
+  {
+    "numero": "60",
+    "pergunta": "Por que o padrão UUPS é considerado eficiente para upgrade?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Ele elimina a necessidade de armazenamento.",
+      "B": "Porque a lógica do proxy chama diretamente o método de upgrade no contrato de implementação.",
+      "C": "Porque permite múltiplos donos simultaneamente.",
+      "D": "Porque funciona sem proxies."
+    }
+  },
+  {
+    "numero": "61",
+    "pergunta": "O que é uma função 'pure' em Solidity?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Função que nem lê nem escreve no estado da blockchain.",
+      "B": "Função que apenas lê o estado da blockchain.",
+      "C": "Função que modifica variáveis de estado.",
+      "D": "Função que destrói o contrato."
+    }
+  },
+  {
+    "numero": "62",
+    "pergunta": "O que o padrão EIP-1967 especifica?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Um padrão para tokens NFTs.",
+      "B": "Um método para criar eventos.",
+      "C": "Um padrão para localização de storage slots em proxies upgradeáveis.",
+      "D": "Um padrão para pausabilidade."
+    }
+  },
+  {
+    "numero": "63",
+    "pergunta": "Qual a principal função do 'constructor' em um contrato proxy?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Executar lógica do negócio principal.",
+      "B": "Gerenciar chamadas externas.",
+      "C": "Gerenciar pagamentos.",
+      "D": "Não é usado; a inicialização é feita via função 'initializer'."
+    }
+  },
+  {
+    "numero": "64",
+    "pergunta": "O que significa 'pull over push payments'?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Enviar pagamentos automaticamente a usuários.",
+      "B": "Usuários retiram fundos manualmente para evitar falhas.",
+      "C": "Empurrar dados para contratos externos.",
+      "D": "Atualizar contratos via pull requests."
+    }
+  },
+  {
+    "numero": "65",
+    "pergunta": "Qual a vantagem do padrão EIP-721?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Define tokens fungíveis padrão.",
+      "B": "Permite proxies upgradeáveis.",
+      "C": "Define tokens não fungíveis (NFTs).",
+      "D": "Implementa multisignature wallets."
+    }
+  },
+  {
+    "numero": "66",
+    "pergunta": "O que é um 'circuit breaker' em contratos inteligentes?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Mecanismo que permite pausar o contrato em casos de emergência.",
+      "B": "Contrato que bloqueia transações indefinidamente.",
+      "C": "Sistema de controle de acesso baseado em múltiplos donos.",
+      "D": "Mecanismo para destruir o contrato automaticamente."
+    }
+  },
+  {
+    "numero": "67",
+    "pergunta": "O que é 'dependency injection' em smart contracts?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Método para atualizar o código do contrato.",
+      "B": "Passar contratos ou dados externos como parâmetros para facilitar a composição.",
+      "C": "Padrão para pausar funções em emergências.",
+      "D": "Contrato que cria outros contratos."
+    }
+  },
+  {
+    "numero": "68",
+    "pergunta": "Como o padrão Ownable facilita o controle de acesso?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Permite múltiplos donos simultâneos.",
+      "B": "Usa listas de permissões complexas.",
+      "C": "Designa um dono único com poderes administrativos.",
+      "D": "Cria contratos clonáveis."
+    }
+  },
+  {
+    "numero": "69",
+    "pergunta": "O que é um 'fallback function' seguro?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Função que aceita ETH e executa lógica complexa.",
+      "B": "Função que nunca é chamada.",
+      "C": "Função que destrói o contrato quando chamada.",
+      "D": "Função que recebe chamadas não correspondentes e deve ter proteção contra abuso."
+    }
+  },
+  {
+    "numero": "70",
+    "pergunta": "Por que é importante a separação entre lógica e dados em contratos upgradeáveis?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Para garantir que dados persistam durante upgrades da lógica.",
+      "B": "Para reduzir o custo de gás em transações.",
+      "C": "Para facilitar o acesso a eventos.",
+      "D": "Para evitar ataques de reentrância."
+    }
+  },
+  {
+    "numero": "71",
+    "pergunta": "Qual a função da biblioteca SafeMath?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Acelerar transações.",
+      "B": "Prevenir overflow e underflow em operações aritméticas.",
+      "C": "Permitir múltiplos donos em um contrato.",
+      "D": "Gerar eventos para logs."
+    }
+  },
+  {
+    "numero": "72",
+    "pergunta": "O que é um token ERC-1155?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Token fungível padrão.",
+      "B": "Token não fungível padrão.",
+      "C": "Token de governance.",
+      "D": "Token multi-padrão que pode ser fungível e não fungível."
+    }
+  },
+  {
+    "numero": "73",
+    "pergunta": "Como funciona o padrão EIP-1967 para proxies?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Define slots fixos para armazenamento de endereço da implementação.",
+      "B": "Define regras para pausar contratos.",
+      "C": "Define padrão para tokens não fungíveis.",
+      "D": "Define assinatura off-chain de mensagens."
+    }
+  },
+  {
+    "numero": "74",
+    "pergunta": "Qual a principal vulnerabilidade que reentrancy guard previne?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Ataques de frontrunning.",
+      "B": "Ataques de overflow.",
+      "C": "Chamadas recursivas que alteram estado indevidamente.",
+      "D": "Ataques de phishing."
+    }
+  },
+  {
+    "numero": "75",
+    "pergunta": "Para que serve o padrão UUPS?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Para criar tokens não fungíveis.",
+      "B": "Para implementar proxies upgradeáveis mais simples e eficientes.",
+      "C": "Para pausar contratos automaticamente.",
+      "D": "Para autenticar usuários."
+    }
+  },
+  {
+    "numero": "76",
+    "pergunta": "O que o padrão 'pull payments' evita?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Falhas em pagamentos automáticos que podem travar funções.",
+      "B": "Execução de funções fora da blockchain.",
+      "C": "Uso de proxies em contratos.",
+      "D": "Ataques de frontrunning."
+    }
+  },
+  {
+    "numero": "77",
+    "pergunta": "O que é um Clone Contract?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Contrato que destrói outros contratos.",
+      "B": "Contrato que gerencia proxies.",
+      "C": "Contrato que é uma cópia leve (minimal proxy) de outro contrato.",
+      "D": "Contrato que gerencia eventos."
+    }
+  },
+  {
+    "numero": "78",
+    "pergunta": "Como funciona o padrão RBAC?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Papel único para o dono do contrato.",
+      "B": "Permite múltiplos papéis com permissões específicas para cada um.",
+      "C": "Define proxies para upgrade.",
+      "D": "Define eventos para logs."
+    }
+  },
+  {
+    "numero": "79",
+    "pergunta": "O que é uma função 'payable'?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Função que pode receber ETH junto com a chamada.",
+      "B": "Função que destrói o contrato.",
+      "C": "Função que envia ETH a outro contrato.",
+      "D": "Função que apenas lê o estado."
+    }
+  },
+  {
+    "numero": "80",
+    "pergunta": "O que faz a função 'delegatecall' em proxies?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Envia ETH para outro contrato.",
+      "B": "Executa código do proxy no contexto do contrato chamado.",
+      "C": "Atualiza o endereço do proxy.",
+      "D": "Executa código do contrato de implementação no contexto do proxy."
+    }
+  },
+  {
+    "numero": "81",
+    "pergunta": "Qual a função do evento Approval no padrão ERC-20?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Notifica que tokens foram transferidos.",
+      "B": "Destrói tokens no contrato.",
+      "C": "Notifica que uma conta foi autorizada a gastar tokens.",
+      "D": "Pausa o contrato."
+    }
+  },
+  {
+    "numero": "82",
+    "pergunta": "O que é front-running em blockchain?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Ataque que destrói um contrato.",
+      "B": "Ataque onde uma transação é antecipada por outra para ganho próprio.",
+      "C": "Atualização não autorizada de contrato.",
+      "D": "Falha em receber ETH."
+    }
+  },
+  {
+    "numero": "83",
+    "pergunta": "Qual a vantagem de usar eventos ao invés de armazenar dados em storage?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Eventos são mais caros em gas.",
+      "B": "Eventos podem alterar o estado do contrato.",
+      "C": "Eventos não são acessíveis fora da blockchain.",
+      "D": "Eventos economizam gas e são usados para logs off-chain."
+    }
+  },
+  {
+    "numero": "84",
+    "pergunta": "O que é um Factory Contract?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Contrato que cria outras instâncias de contratos.",
+      "B": "Contrato que gerencia proxies.",
+      "C": "Contrato que armazena tokens.",
+      "D": "Contrato que destrói outros contratos."
+    }
+  },
+  {
+    "numero": "85",
+    "pergunta": "O que é gas optimization?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Aumentar o custo da transação.",
+      "B": "Criar proxies transparentes.",
+      "C": "Técnicas para reduzir o consumo de gas nas operações do contrato.",
+      "D": "Gerar eventos automaticamente."
+    }
+  },
+  {
+    "numero": "86",
+    "pergunta": "O que significa 'packing' em storage layout?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Separar dados para diferentes contratos.",
+      "B": "Agrupar variáveis para usar menos slots de storage e economizar gas.",
+      "C": "Criar proxies transparentes.",
+      "D": "Excluir dados antigos."
+    }
+  },
+  {
+    "numero": "87",
+    "pergunta": "Qual o objetivo de 'initialization' em contratos upgradeáveis?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Configurar estado após deploy, já que construtores não funcionam em proxies.",
+      "B": "Destruir contratos antigos.",
+      "C": "Atualizar proxies automaticamente.",
+      "D": "Garantir pausabilidade."
+    }
+  },
+  {
+    "numero": "88",
+    "pergunta": "O que é uma 'multi-signature wallet'?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Carteira que permite apenas uma assinatura.",
+      "B": "Carteira para NFTs.",
+      "C": "Carteira que não armazena tokens.",
+      "D": "Carteira que requer múltiplas assinaturas para executar transações."
+    }
+  },
+  {
+    "numero": "89",
+    "pergunta": "Por que usar a técnica Checks-Effects-Interactions?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Para garantir que contratos sejam pausáveis.",
+      "B": "Para evitar ataques de reentrância ordenando operações corretamente.",
+      "C": "Para acelerar transações.",
+      "D": "Para gerar eventos."
+    }
+  },
+  {
+    "numero": "90",
+    "pergunta": "O que significa o padrão EIP-1167?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Padrão para NFTs.",
+      "B": "Padrão para tokens fungíveis.",
+      "C": "Padrão para contratos clone minimal proxies.",
+      "D": "Padrão para pausabilidade."
+    }
+  },
+  {
+    "numero": "91",
+    "pergunta": "O que é meta-transaction?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Transação assinada off-chain e executada on-chain por outro.",
+      "B": "Transação que destrói contrato.",
+      "C": "Transação que atualiza contrato.",
+      "D": "Transação que pausa contrato."
+    }
+  },
+  {
+    "numero": "92",
+    "pergunta": "O que é o padrão EIP-712 usado para?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Para criar proxies.",
+      "B": "Para criar tokens.",
+      "C": "Para pausar contratos.",
+      "D": "Para assinaturas estruturadas off-chain."
+    }
+  },
+  {
+    "numero": "93",
+    "pergunta": "O que é um Reentrancy Guard?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Uma biblioteca para gerar eventos.",
+      "B": "Mecanismo para bloquear chamadas recursivas em funções críticas.",
+      "C": "Contrato que pausa outras funções.",
+      "D": "Contrato para criar proxies."
+    }
+  },
+  {
+    "numero": "94",
+    "pergunta": "Qual é o propósito do padrão Ownable?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Criar proxies upgradeáveis.",
+      "B": "Gerar eventos para logs.",
+      "C": "Designar proprietário com privilégios administrativos.",
+      "D": "Permitir pausabilidade automática."
+    }
+  },
+  {
+    "numero": "95",
+    "pergunta": "O que significa 'fallback' e 'receive' em Solidity?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Funções para receber ETH, a primeira para chamadas não identificadas e a segunda para recebimento direto.",
+      "B": "Funções para destruir contrato.",
+      "C": "Funções para atualizar proxies.",
+      "D": "Funções para criar tokens."
+    }
+  },
+  {
+    "numero": "96",
+    "pergunta": "O que é 'initializable' em contratos upgradeáveis?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Construtor padrão.",
+      "B": "Mecanismo para inicializar o contrato após deploy em proxies.",
+      "C": "Função para destruir contrato.",
+      "D": "Função para atualizar proxies."
+    }
+  },
+  {
+    "numero": "97",
+    "pergunta": "O que é gas auction?",
+    "resposta_certa": "D",
+    "respostas": {
+      "A": "Leilão de tokens ERC-20.",
+      "B": "Mecanismo para pausabilidade de contrato.",
+      "C": "Padrão para upgrade de proxies.",
+      "D": "Mecanismo para mitigar frontrunning oferecendo recompensas."
+    }
+  },
+  {
+    "numero": "98",
+    "pergunta": "Qual a função do padrão EIP-2612?",
+    "resposta_certa": "C",
+    "respostas": {
+      "A": "Criar NFTs.",
+      "B": "Atualizar proxies automaticamente.",
+      "C": "Permitir aprovação de tokens via assinatura off-chain.",
+      "D": "Gerar eventos."
+    }
+  },
+  {
+    "numero": "99",
+    "pergunta": "Por que é importante otimizar layout de storage?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Para aumentar a segurança.",
+      "B": "Para reduzir custo de gas em operações de leitura/escrita.",
+      "C": "Para facilitar upgrade de contrato.",
+      "D": "Para gerar logs."
+    }
+  },
+  {
+    "numero": "100",
+    "pergunta": "O que faz a função 'initializer' em contratos upgradeáveis?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Função para inicializar o estado do contrato uma única vez após deploy.",
+      "B": "Função para pausar o contrato.",
+      "C": "Função para atualizar proxies.",
+      "D": "Função para destruir o contrato."
+    }
+  },
+  {
+    "numero": "101",
+    "pergunta": "Qual a finalidade principal de um contrato proxy em contratos upgradeáveis?",
+    "resposta_certa": "B",
+    "respostas": {
+      "A": "Armazenar toda a lógica do contrato.",
+      "B": "Manter o endereço fixo do contrato, enquanto a lógica pode ser atualizada em um contrato de implementação separado.",
+      "C": "Pausar as operações do contrato.",
+      "D": "Emitir eventos de segurança."
+    }
+  },
+  {
+    "numero": "102",
+    "pergunta": "O que é 'delegatecall' e por que é importante para contratos upgradeáveis?",
+    "resposta_certa": "A",
+    "respostas": {
+      "A": "Permite que um contrato execute o código de outro contrato no contexto do chamador, preservando o armazenamento e o balanço do chamador.",
+      "B": "É uma forma de enviar Ether entre contratos.",
+      "C": "É uma função para destruir um contrato.",
+      "D": "Usado para verificar a propriedade de um contrato."
+    }
+  }
+]
