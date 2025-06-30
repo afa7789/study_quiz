@@ -66,7 +66,7 @@ async function loadFlashcardsSmartly() {
             console.log(`❌ Falha ao carregar de ${name}:`, error.message);
             
             if (isLast) {
-                // Último fallback falhou
+                // Último fallback falhou - esconde loading e mostra erro
                 hideLoadingStatus();
                 alert(`❌ Não foi possível carregar os flashcards de nenhuma fonte:
 
@@ -84,10 +84,45 @@ async function loadFlashcardsSmartly() {
     }
 }
 
-// Carrega flashcards automaticamente ao inicializar (silenciosamente)
-loadFlashcardsSmartly().catch(() => {
-    console.log('Carregamento inicial falhou, aguardando interação do usuário...');
-});
+// Funções de interface (podem ser chamadas antes da inicialização)
+function showLoadingStatus(message) {
+    const loadingStatus = document.getElementById('loading-status');
+    const loadingMessage = document.getElementById('loading-message');
+    if (loadingStatus && loadingMessage) {
+        loadingMessage.textContent = message;
+        loadingStatus.classList.remove('hidden');
+    }
+}
+
+function hideLoadingStatus() {
+    const loadingStatus = document.getElementById('loading-status');
+    if (loadingStatus) {
+        loadingStatus.classList.add('hidden');
+    }
+}
+
+function showFlashcardsInfo(count) {
+    const flashcardsInfo = document.getElementById('flashcards-info');
+    const flashcardsCount = document.getElementById('flashcards-count');
+    if (flashcardsInfo && flashcardsCount) {
+        flashcardsCount.textContent = count;
+        flashcardsInfo.classList.remove('hidden');
+    }
+}
+
+function enableStartButton() {
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+    if (startQuizBtn) {
+        startQuizBtn.disabled = false;
+    }
+}
+
+function disableStartButton() {
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+    if (startQuizBtn) {
+        startQuizBtn.disabled = true;
+    }
+}
 
 
 let allFlashcards = []; // Armazenará todos os flashcards disponíveis
@@ -140,48 +175,11 @@ let correctAnswersCountSpan;
 let totalTimeSpan;
 let averageTimeSpan;
 let wrongQuestionsList;
-
-// Novos elementos
 let loadFromUrlBtn;
 let customUrlInput;
-let loadingStatus;
-let loadingMessage;
-let flashcardsInfo;
-let flashcardsCount;
 let quizModeSelect;
 
-// Funções de interface
-function showLoadingStatus(message) {
-    if (loadingStatus && loadingMessage) {
-        loadingMessage.textContent = message;
-        loadingStatus.classList.remove('hidden');
-    }
-}
 
-function hideLoadingStatus() {
-    if (loadingStatus) {
-        loadingStatus.classList.add('hidden');
-    }
-}
-
-function showFlashcardsInfo(count) {
-    if (flashcardsInfo && flashcardsCount) {
-        flashcardsCount.textContent = count;
-        flashcardsInfo.classList.remove('hidden');
-    }
-}
-
-function enableStartButton() {
-    if (startQuizBtn) {
-        startQuizBtn.disabled = false;
-    }
-}
-
-function disableStartButton() {
-    if (startQuizBtn) {
-        startQuizBtn.disabled = true;
-    }
-}
 
 
 // --- Event Listeners e Inicialização ---
@@ -211,10 +209,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadSmartBtn = document.getElementById('load-smart-btn');
     loadFromUrlBtn = document.getElementById('load-from-url-btn');
     customUrlInput = document.getElementById('custom-url');
-    loadingStatus = document.getElementById('loading-status');
-    loadingMessage = document.getElementById('loading-message');
-    flashcardsInfo = document.getElementById('flashcards-info');
-    flashcardsCount = document.getElementById('flashcards-count');
+    const loadingStatus = document.getElementById('loading-status');
+    const loadingMessage = document.getElementById('loading-message');
+    const flashcardsInfo = document.getElementById('flashcards-info');
+    const flashcardsCount = document.getElementById('flashcards-count');
     quizModeSelect = document.getElementById('quiz-mode');
 
     // Event Listeners
@@ -257,12 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
         restartQuizBtn.addEventListener('click', showSetupSection);
     }
 
-    // Inicialização
+    // Inicialização e carregamento automático
     if (isFlashcardsLoaded) {
         showFlashcardsInfo(exampleFlashcards.length);
         enableStartButton();
     } else {
         disableStartButton();
+        // Carrega automaticamente quando a página for aberta
+        loadFlashcardsSmartly();
     }
     
     showSetupSection();
@@ -567,34 +567,16 @@ function formatTime(ms) {
 // ... (seus dados exampleFlashcards e outras variáveis globais) ...
 
 
-// ... (o resto das suas funções como loadFlashcardsFromFile, startQuiz, etc., podem ficar fora,
-// desde que as variáveis que elas acessam tenham sido inicializadas dentro do DOMContentLoaded) ...
-
-// Inicialização: carrega os flashcards de exemplo ao carregar a página
-document.addEventListener('DOMContentLoaded', () => {
-    allFlashcards = [...exampleFlashcards];
-    numQuestionsInput.value = Math.min(5, allFlashcards.length); // Define um número inicial de perguntas
-    showSetupSection();
-});
-
 // Timer global do quiz (exibição)
 let quizTimerInterval;
+
 function startQuizTimerDisplay() {
     clearInterval(quizTimerInterval); // Limpa qualquer timer anterior
     quizTimerInterval = setInterval(() => {
         const elapsed = Date.now() - quizStartTime;
-        timerSpan.textContent = `Tempo: ${formatTime(elapsed)}`;
+        const timerSpan = document.getElementById('timer');
+        if (timerSpan) {
+            timerSpan.textContent = `Tempo: ${formatTime(elapsed)}`;
+        }
     }, 1000); // Atualiza a cada segundo
 }
-// Ajuste para iniciar o timer na função startQuiz
-const originalStartQuiz = startQuiz;
-startQuiz = () => {
-    originalStartQuiz();
-    startQuizTimerDisplay(); // Inicia a exibição do timer ao começar o quiz
-};
-// Ajuste para parar o timer na função endQuiz
-const originalEndQuiz = endQuiz;
-endQuiz = () => {
-    clearInterval(quizTimerInterval); // Para a exibição do timer ao finalizar
-    originalEndQuiz();
-};
