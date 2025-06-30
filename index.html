@@ -14,15 +14,64 @@
     <main class="quiz-container">
         <section id="setup-section" class="quiz-section">
             <h2>Configurações do Quiz</h2>
-            <div class="input-group">
-                <label for="flashcard-file">Carregar Flashcards (JSON):</label>
-                <input type="file" id="flashcard-file" accept=".json">
+            
+            <!-- Opções de carregamento de flashcards -->
+            <div class="flashcard-source-options">
+                <h3>📚 Carregar Flashcards</h3>
+                
+                <div class="input-group">
+                    <button id="load-default-btn" class="load-option-btn">
+                        🎯 Usar Flashcards Padrão (Solidity)
+                    </button>
+                    <small>Flashcards sobre desenvolvimento Solidity e Web3</small>
+                </div>
+                
+                <div class="input-group">
+                    <button id="load-from-github-btn" class="load-option-btn">
+                        🌐 Importar do GitHub
+                    </button>
+                    <small>Carrega diretamente do repositório online</small>
+                </div>
+                
+                <div class="input-group">
+                    <label for="flashcard-file">📁 Carregar Arquivo Local:</label>
+                    <input type="file" id="flashcard-file" accept=".json">
+                </div>
+                
+                <div class="input-group">
+                    <label for="custom-url">🔗 URL Personalizada:</label>
+                    <input type="url" id="custom-url" placeholder="https://raw.githubusercontent.com/...">
+                    <button id="load-from-url-btn">Carregar da URL</button>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="num-questions">Número de Perguntas (0 para todas):</label>
-                <input type="number" id="num-questions" value="5" min="0">
+            
+            <!-- Status do carregamento -->
+            <div id="loading-status" class="loading-status hidden">
+                <span class="loading-spinner">⏳</span>
+                <span id="loading-message">Carregando flashcards...</span>
             </div>
-            <button id="start-quiz-btn">Iniciar Quiz</button>
+            
+            <!-- Configurações do quiz -->
+            <div class="quiz-config">
+                <h3>⚙️ Configurações do Quiz</h3>
+                <div class="input-group">
+                    <label for="num-questions">Número de Perguntas (0 para todas):</label>
+                    <input type="number" id="num-questions" value="5" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="quiz-mode">Modo do Quiz:</label>
+                    <select id="quiz-mode">
+                        <option value="random">🎲 Aleatório</option>
+                        <option value="sequential">📝 Sequencial</option>
+                        <option value="priority">⭐ Prioridade (erros primeiro)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button id="start-quiz-btn" disabled>🚀 Iniciar Quiz</button>
+            <div id="flashcards-info" class="flashcards-info hidden">
+                <small>📊 <span id="flashcards-count">0</span> flashcards carregados</small>
+            </div>
         </section>
 
         <section id="quiz-section" class="quiz-section hidden">

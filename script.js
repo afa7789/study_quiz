@@ -1,18 +1,47 @@
-// Carrega flashcards de flashcards.json ao carregar a página
+// URLs dos flashcards
+const GITHUB_FLASHCARDS_URL = 'https://raw.githubusercontent.com/afa7789/study_quiz/refs/heads/master/flashcards.json';
+const LOCAL_FLASHCARDS_URL = './flashcards.json';
+
+// Carrega flashcards padrão ao inicializar
 let exampleFlashcards = [];
-fetch('flashcards.json')
-    .then(response => response.json())
-    .then(data => {
-        if (Array.isArray(data) && data.every(isValidFlashcard)) {
-            exampleFlashcards = data;
-            alert('Flashcards carregados com sucesso de flashcards.json');
-        } else {
-            alert('Erro: flashcards.json não está no formato esperado para flashcards.');
+let isFlashcardsLoaded = false;
+
+// Função para carregar flashcards de uma URL
+async function loadFlashcardsFromURL(url, source = 'URL') {
+    try {
+        showLoadingStatus(`Carregando flashcards de ${source}...`);
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-    })
-    .catch(error => {
+        
+        const data = await response.json();
+        
+        if (!Array.isArray(data) || !data.every(isValidFlashcard)) {
+            throw new Error('Formato de dados inválido');
+        }
+        
+        exampleFlashcards = data;
+        isFlashcardsLoaded = true;
+        
+        hideLoadingStatus();
+        showFlashcardsInfo(data.length);
+        enableStartButton();
+        
+        alert(`✅ ${data.length} flashcards carregados com sucesso de ${source}!`);
+        
+    } catch (error) {
+        hideLoadingStatus();
         console.error('Erro ao carregar flashcards:', error);
-        alert('Erro ao carregar flashcards de flashcards.json.');
+        alert(`❌ Erro ao carregar flashcards de ${source}: ${error.message}`);
+    }
+}
+
+// Carrega flashcards locais por padrão (silenciosamente)
+loadFlashcardsFromURL(LOCAL_FLASHCARDS_URL, 'arquivo local')
+    .catch(() => {
+        console.log('Arquivo local não encontrado, aguardando seleção manual...');
     });
 
 
@@ -67,6 +96,50 @@ let totalTimeSpan;
 let averageTimeSpan;
 let wrongQuestionsList;
 
+// Novos elementos
+let loadDefaultBtn;
+let loadFromGithubBtn;
+let loadFromUrlBtn;
+let customUrlInput;
+let loadingStatus;
+let loadingMessage;
+let flashcardsInfo;
+let flashcardsCount;
+let quizModeSelect;
+
+// Funções de interface
+function showLoadingStatus(message) {
+    if (loadingStatus && loadingMessage) {
+        loadingMessage.textContent = message;
+        loadingStatus.classList.remove('hidden');
+    }
+}
+
+function hideLoadingStatus() {
+    if (loadingStatus) {
+        loadingStatus.classList.add('hidden');
+    }
+}
+
+function showFlashcardsInfo(count) {
+    if (flashcardsInfo && flashcardsCount) {
+        flashcardsCount.textContent = count;
+        flashcardsInfo.classList.remove('hidden');
+    }
+}
+
+function enableStartButton() {
+    if (startQuizBtn) {
+        startQuizBtn.disabled = false;
+    }
+}
+
+function disableStartButton() {
+    if (startQuizBtn) {
+        startQuizBtn.disabled = true;
+    }
+}
+
 
 // --- Event Listeners e Inicialização ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -91,15 +164,71 @@ document.addEventListener('DOMContentLoaded', () => {
     averageTimeSpan = document.getElementById('average-time');
     wrongQuestionsList = document.getElementById('wrong-questions-list');
 
-    // **E OS EVENT LISTENERS TAMBÉM**
-    flashcardFileInput.addEventListener('change', loadFlashcardsFromFile);
-    startQuizBtn.addEventListener('click', startQuiz);
-    nextQuestionBtn.addEventListener('click', nextQuestion);
-    restartQuizBtn.addEventListener('click', showSetupSection);
+    // Novos elementos
+    loadDefaultBtn = document.getElementById('load-default-btn');
+    loadFromGithubBtn = document.getElementById('load-from-github-btn');
+    loadFromUrlBtn = document.getElementById('load-from-url-btn');
+    customUrlInput = document.getElementById('custom-url');
+    loadingStatus = document.getElementById('loading-status');
+    loadingMessage = document.getElementById('loading-message');
+    flashcardsInfo = document.getElementById('flashcards-info');
+    flashcardsCount = document.getElementById('flashcards-count');
+    quizModeSelect = document.getElementById('quiz-mode');
 
-    // Inicialização: carrega os flashcards de exemplo ao carregar a página
-    allFlashcards = [...exampleFlashcards];
-    numQuestionsInput.value = Math.min(5, allFlashcards.length); // Define um número inicial de perguntas
+    // Event Listeners
+    if (loadDefaultBtn) {
+        loadDefaultBtn.addEventListener('click', () => {
+            loadFlashcardsFromURL(LOCAL_FLASHCARDS_URL, 'flashcards padrão');
+        });
+    }
+
+    if (loadFromGithubBtn) {
+        loadFromGithubBtn.addEventListener('click', () => {
+            loadFlashcardsFromURL(GITHUB_FLASHCARDS_URL, 'GitHub');
+        });
+    }
+
+    if (loadFromUrlBtn && customUrlInput) {
+        loadFromUrlBtn.addEventListener('click', () => {
+            const url = customUrlInput.value.trim();
+            if (!url) {
+                alert('❌ Por favor, insira uma URL válida');
+                return;
+            }
+            loadFlashcardsFromURL(url, 'URL personalizada');
+        });
+    }
+
+    // Event listener para Enter na URL
+    if (customUrlInput) {
+        customUrlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadFromUrlBtn.click();
+            }
+        });
+    }
+    // **E OS EVENT LISTENERS TAMBÉM**
+    if (flashcardFileInput) {
+        flashcardFileInput.addEventListener('change', loadFlashcardsFromFile);
+    }
+    if (startQuizBtn) {
+        startQuizBtn.addEventListener('click', startQuiz);
+    }
+    if (nextQuestionBtn) {
+        nextQuestionBtn.addEventListener('click', nextQuestion);
+    }
+    if (restartQuizBtn) {
+        restartQuizBtn.addEventListener('click', showSetupSection);
+    }
+
+    // Inicialização
+    if (isFlashcardsLoaded) {
+        showFlashcardsInfo(exampleFlashcards.length);
+        enableStartButton();
+    } else {
+        disableStartButton();
+    }
+    
     showSetupSection();
 });
 
@@ -116,28 +245,35 @@ async function loadFlashcardsFromFile(event) {
     }
 
     try {
+        showLoadingStatus(`Carregando arquivo ${file.name}...`);
+        
         const reader = new FileReader();
         reader.onload = async (e) => {
             try {
                 const parsedData = JSON.parse(e.target.result);
                 if (Array.isArray(parsedData) && parsedData.every(isValidFlashcard)) {
-                    allFlashcards = parsedData;
-                    alert(`Flashcards carregados com sucesso do arquivo: ${file.name}`);
-                    numQuestionsInput.value = Math.min(5, allFlashcards.length); // Ajusta o número padrão para o quiz
+                    exampleFlashcards = parsedData;
+                    isFlashcardsLoaded = true;
+                    
+                    hideLoadingStatus();
+                    showFlashcardsInfo(parsedData.length);
+                    enableStartButton();
+                    
+                    alert(`✅ ${parsedData.length} flashcards carregados com sucesso do arquivo: ${file.name}`);
                 } else {
-                    alert('Erro: O arquivo JSON não está no formato esperado para flashcards.');
-                    allFlashcards = [...exampleFlashcards]; // Volta para os exemplos
+                    throw new Error('Formato de arquivo inválido');
                 }
             } catch (parseError) {
-                alert('Erro ao analisar o JSON do arquivo. Verifique o formato.');
-                allFlashcards = [...exampleFlashcards]; // Volta para os exemplos
+                hideLoadingStatus();
+                alert('❌ Erro ao analisar o JSON do arquivo. Verifique o formato.');
+                console.error('Parse error:', parseError);
             }
         };
         reader.readAsText(file);
     } catch (error) {
-        console.error('Erro ao ler o arquivo:', error);
-        alert('Erro ao ler o arquivo de flashcards.');
-        allFlashcards = [...exampleFlashcards]; // Volta para os exemplos
+        hideLoadingStatus();
+        alert('❌ Erro ao carregar o arquivo.');
+        console.error('File loading error:', error);
     }
 }
 
@@ -161,7 +297,55 @@ function isValidFlashcard(flashcard) {
  * @param {number} num - O número de perguntas a serem selecionadas.
  * @returns {Array} - Um array de flashcards selecionados aleatoriamente.
  */
+/**
+ * Seleciona flashcards baseado no modo escolhido
+ * @param {number} num - Número de flashcards (0 para todos)
+ * @param {string} mode - Modo de seleção: 'random', 'sequential', 'priority'
+ */
+function selectFlashcards(num, mode = 'random') {
+    const source = exampleFlashcards;
+    const totalQuestions = num === 0 ? source.length : Math.min(num, source.length);
+    
+    if (totalQuestions === 0) return [];
+    
+    let selected = [];
+    
+    switch (mode) {
+        case 'sequential':
+            selected = source.slice(0, totalQuestions);
+            break;
+            
+        case 'priority':
+            // Prioriza perguntas que foram erradas antes (se houver histórico)
+            // Por agora, implementa como aleatório
+            selected = shuffleArray([...source]).slice(0, totalQuestions);
+            break;
+            
+        case 'random':
+        default:
+            selected = shuffleArray([...source]).slice(0, totalQuestions);
+            break;
+    }
+    
+    return selected;
+}
+
+/**
+ * Embaralha um array usando o algoritmo Fisher-Yates
+ */
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Manter função antiga para compatibilidade
 function selectRandomFlashcards(num) {
+    return selectFlashcards(num, 'random');
+}
     if (num === 0 || num >= allFlashcards.length) {
         // Se 0 ou mais do que o total, usa todos os flashcards e os embaralha
         return shuffleArray([...allFlashcards]);
@@ -200,34 +384,40 @@ function showSetupSection() {
  */
 function startQuiz() {
     const numQuestions = parseInt(numQuestionsInput.value, 10);
+    const quizMode = quizModeSelect ? quizModeSelect.value : 'random';
 
     if (isNaN(numQuestions) || numQuestions < 0) {
         alert('Por favor, insira um número válido de perguntas (0 para todas).');
         return;
     }
-    if (allFlashcards.length === 0) {
-        alert('Nenhum flashcard carregado. Por favor, carregue um arquivo JSON ou use os exemplos.');
+    
+    if (!isFlashcardsLoaded || exampleFlashcards.length === 0) {
+        alert('❌ Nenhum flashcard carregado. Por favor, carregue flashcards primeiro.');
         return;
     }
 
-    quizFlashcards = selectRandomFlashcards(numQuestions);
+    // Seleciona flashcards baseado no modo
+    quizFlashcards = selectFlashcards(numQuestions, quizMode);
     if (quizFlashcards.length === 0) {
         alert('Não foi possível selecionar perguntas. Verifique se há flashcards disponíveis.');
         return;
     }
 
+    // Resetar estado do quiz
     currentQuestionIndex = 0;
     correctAnswersCount = 0;
     wrongQuestions = [];
     questionTimes = [];
     totalQuizTime = 0;
-    quizStartTime = Date.now(); // Inicia o timer do quiz
+    quizStartTime = Date.now();
 
-    setupSection.classList.add('hidden');
-    quizSection.classList.remove('hidden');
-    resultsSection.classList.add('hidden');
+    // Mostrar seção do quiz
+    if (setupSection) setupSection.classList.add('hidden');
+    if (quizSection) quizSection.classList.remove('hidden');
+    if (resultsSection) resultsSection.classList.add('hidden');
 
     displayCurrentFlashcard();
+    startQuizTimerDisplay();
 }
 
 /**
