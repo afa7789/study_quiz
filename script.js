@@ -1,15 +1,16 @@
-// URLs dos flashcards
-const GITHUB_FLASHCARDS_URL = 'https://raw.githubusercontent.com/afa7789/study_quiz/refs/heads/master/flashcards.json';
+// URLs dos flashcards com múltiplos fallbacks
 const LOCAL_FLASHCARDS_URL = './flashcards.json';
+const GITHUB_PAGES_URL = 'https://afa7789.github.io/study_quiz/flashcards.json';
+const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/afa7789/study_quiz/refs/heads/master/flashcards.json';
 
 // Carrega flashcards padrão ao inicializar
 let exampleFlashcards = [];
 let isFlashcardsLoaded = false;
 
 // Função para carregar flashcards de uma URL
-async function loadFlashcardsFromURL(url, source = 'URL') {
+async function loadFlashcardsFromURL(url, source = 'URL', silent = false) {
     try {
-        showLoadingStatus(`Carregando flashcards de ${source}...`);
+        if (!silent) showLoadingStatus(`Carregando flashcards de ${source}...`);
         
         const response = await fetch(url);
         if (!response.ok) {
@@ -29,42 +30,56 @@ async function loadFlashcardsFromURL(url, source = 'URL') {
         showFlashcardsInfo(data.length);
         enableStartButton();
         
-        alert(`✅ ${data.length} flashcards carregados com sucesso de ${source}!`);
+        if (!silent) {
+            alert(`✅ ${data.length} flashcards carregados com sucesso de ${source}!`);
+        } else {
+            console.log(`✅ ${data.length} flashcards carregados de ${source}`);
+        }
         
     } catch (error) {
-        hideLoadingStatus();
-        console.error('Erro ao carregar flashcards:', error);
-        alert(`❌ Erro ao carregar flashcards de ${source}: ${error.message}`);
+        if (!silent) {
+            hideLoadingStatus();
+            console.error(`Erro ao carregar flashcards de ${source}:`, error);
+        }
+        throw error; // Re-throw para permitir que a função chamadora trate o erro
     }
 }
 
-// Função para carregar flashcards de forma inteligente (local -> GitHub)
+// Função para carregar flashcards com múltiplos fallbacks
 async function loadFlashcardsSmartly() {
-    try {
-        showLoadingStatus('Procurando flashcards locais...');
-        
-        // Primeiro tenta carregar do arquivo local
-        await loadFlashcardsFromURL(LOCAL_FLASHCARDS_URL, 'arquivo local');
-        
-    } catch (localError) {
-        console.log('Arquivo local não encontrado, tentando GitHub...', localError);
+    const fallbacks = [
+        { url: LOCAL_FLASHCARDS_URL, name: 'arquivo local' },
+        { url: GITHUB_PAGES_URL, name: 'GitHub Pages' },
+        { url: GITHUB_RAW_URL, name: 'GitHub Raw' }
+    ];
+    
+    for (let i = 0; i < fallbacks.length; i++) {
+        const { url, name } = fallbacks[i];
+        const isLast = i === fallbacks.length - 1;
         
         try {
-            showLoadingStatus('Carregando do GitHub...');
-            await loadFlashcardsFromURL(GITHUB_FLASHCARDS_URL, 'GitHub');
+            showLoadingStatus(`Tentando carregar de ${name}...`);
+            await loadFlashcardsFromURL(url, name, true); // silent = true
+            return; // Sucesso! Para aqui
             
-        } catch (githubError) {
-            hideLoadingStatus();
-            console.error('Erro ao carregar de ambas as fontes:', { localError, githubError });
-            alert(`❌ Não foi possível carregar os flashcards de nenhuma fonte:
+        } catch (error) {
+            console.log(`❌ Falha ao carregar de ${name}:`, error.message);
             
-📁 Local: ${localError.message}
-🌐 GitHub: ${githubError.message}
+            if (isLast) {
+                // Último fallback falhou
+                hideLoadingStatus();
+                alert(`❌ Não foi possível carregar os flashcards de nenhuma fonte:
+
+📁 Local: Arquivo não encontrado
+🌐 GitHub Pages: ${GITHUB_PAGES_URL}  
+📎 GitHub Raw: ${GITHUB_RAW_URL}
 
 💡 Sugestões:
 • Use "Carregar Arquivo Personalizado" para selecionar um arquivo
 • Verifique sua conexão com a internet
 • Use uma URL personalizada`);
+            }
+            // Continua para o próximo fallback
         }
     }
 }
