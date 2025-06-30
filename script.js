@@ -26,6 +26,7 @@ async function loadFlashcardsFromURL(url, source = 'URL', silent = false) {
         exampleFlashcards = data;
         isFlashcardsLoaded = true;
         
+        // Sempre esconde o loading após sucesso
         hideLoadingStatus();
         showFlashcardsInfo(data.length);
         enableStartButton();
@@ -35,6 +36,8 @@ async function loadFlashcardsFromURL(url, source = 'URL', silent = false) {
         } else {
             console.log(`✅ ${data.length} flashcards carregados de ${source}`);
         }
+        
+        return true; // Indica sucesso
         
     } catch (error) {
         if (!silent) {
@@ -60,7 +63,10 @@ async function loadFlashcardsSmartly() {
         try {
             showLoadingStatus(`Tentando carregar de ${name}...`);
             await loadFlashcardsFromURL(url, name, true); // silent = true
-            return; // Sucesso! Para aqui
+            
+            // Se chegou aqui, carregou com sucesso
+            console.log(`✅ Flashcards carregados com sucesso de ${name}`);
+            return; // IMPORTANTE: Para aqui após sucesso
             
         } catch (error) {
             console.log(`❌ Falha ao carregar de ${name}:`, error.message);
@@ -79,7 +85,7 @@ async function loadFlashcardsSmartly() {
 • Verifique sua conexão com a internet
 • Use uma URL personalizada`);
             }
-            // Continua para o próximo fallback
+            // Continua para o próximo fallback apenas se não for o último
         }
     }
 }
@@ -135,30 +141,7 @@ let questionStartTime;
 let totalQuizTime = 0;
 let questionTimes = []; // Armazena o tempo gasto em cada pergunta
 
-// Referências aos elementos HTML
-// const setupSection = document.getElementById('setup-section');
-// const quizSection = document.getElementById('quiz-section');
-// const resultsSection = document.getElementById('results-section');
-
-
-// const flashcardFileInput = document.getElementById('flashcard-file');
-// const numQuestionsInput = document.getElementById('num-questions');
-// const startQuizBtn = document.getElementById('start-quiz-btn');
-// const nextQuestionBtn = document.getElementById('next-question-btn');
-// const restartQuizBtn = document.getElementById('restart-quiz-btn');
-
-// const questionCounterSpan = document.getElementById('question-counter');
-// const timerSpan = document.getElementById('timer');
-// const flashcardQuestionH3 = document.getElementById('flashcard-question');
-// const flashcardOptionsDiv = document.getElementById('flashcard-options');
-
-// const correctAnswersCountSpan = document.getElementById('correct-answers-count');
-// const totalTimeSpan = document.getElementById('total-time');
-// const averageTimeSpan = document.getElementById('average-time');
-// const wrongQuestionsList = document.getElementById('wrong-questions-list');
-
-
-// **MOVA ESTAS VARIÁVEIS PARA DENTRO DO DOMContentLoaded**
+// Variáveis dos elementos HTML
 let setupSection;
 let quizSection;
 let resultsSection;
@@ -179,12 +162,9 @@ let loadFromUrlBtn;
 let customUrlInput;
 let quizModeSelect;
 
-
-
-
 // --- Event Listeners e Inicialização ---
 document.addEventListener('DOMContentLoaded', () => {
-    // **COMECE AQUI A SELEÇÃO DOS ELEMENTOS HTML**
+    // Seleção dos elementos HTML
     setupSection = document.getElementById('setup-section');
     quizSection = document.getElementById('quiz-section');
     resultsSection = document.getElementById('results-section');
@@ -209,10 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadSmartBtn = document.getElementById('load-smart-btn');
     loadFromUrlBtn = document.getElementById('load-from-url-btn');
     customUrlInput = document.getElementById('custom-url');
-    const loadingStatus = document.getElementById('loading-status');
-    const loadingMessage = document.getElementById('loading-message');
-    const flashcardsInfo = document.getElementById('flashcards-info');
-    const flashcardsCount = document.getElementById('flashcards-count');
     quizModeSelect = document.getElementById('quiz-mode');
 
     // Event Listeners
@@ -241,7 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    // **E OS EVENT LISTENERS TAMBÉM**
+
+    // Event listeners principais
     if (flashcardFileInput) {
         flashcardFileInput.addEventListener('change', loadFlashcardsFromFile);
     }
@@ -327,12 +304,6 @@ function isValidFlashcard(flashcard) {
     );
 }
 
-/**
- * Seleciona um número X de perguntas aleatórias dos flashcards disponíveis.
- * Se X for 0, seleciona todas as perguntas.
- * @param {number} num - O número de perguntas a serem selecionadas.
- * @returns {Array} - Um array de flashcards selecionados aleatoriamente.
- */
 /**
  * Seleciona flashcards baseado no modo escolhido
  * @param {number} num - Número de flashcards (0 para todos)
@@ -562,10 +533,6 @@ function formatTime(ms) {
     const seconds = totalSeconds % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
-
-// --- Event Listeners ---
-// ... (seus dados exampleFlashcards e outras variáveis globais) ...
-
 
 // Timer global do quiz (exibição)
 let quizTimerInterval;
