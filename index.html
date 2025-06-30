@@ -20,28 +20,23 @@
                 <h3>📚 Carregar Flashcards</h3>
                 
                 <div class="input-group">
-                    <button id="load-default-btn" class="load-option-btn">
-                        🎯 Usar Flashcards Padrão (Solidity)
+                    <button id="load-smart-btn" class="load-option-btn primary">
+                        🎯 Carregar Flashcards de Solidity
                     </button>
-                    <small>Flashcards sobre desenvolvimento Solidity e Web3</small>
+                    <small>Tenta carregar arquivo local, se não encontrar busca do GitHub automaticamente</small>
                 </div>
                 
                 <div class="input-group">
-                    <button id="load-from-github-btn" class="load-option-btn">
-                        🌐 Importar do GitHub
-                    </button>
-                    <small>Carrega diretamente do repositório online</small>
-                </div>
-                
-                <div class="input-group">
-                    <label for="flashcard-file">📁 Carregar Arquivo Local:</label>
+                    <label for="flashcard-file">📁 Carregar Arquivo Personalizado:</label>
                     <input type="file" id="flashcard-file" accept=".json">
+                    <small>Selecione um arquivo JSON com seus próprios flashcards</small>
                 </div>
                 
                 <div class="input-group">
                     <label for="custom-url">🔗 URL Personalizada:</label>
                     <input type="url" id="custom-url" placeholder="https://raw.githubusercontent.com/...">
                     <button id="load-from-url-btn">Carregar da URL</button>
+                    <small>Carregue flashcards de qualquer URL que retorne JSON válido</small>
                 </div>
             </div>
             

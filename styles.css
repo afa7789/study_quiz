@@ -236,6 +236,19 @@ button:disabled {
     transform: translateY(0);
 }
 
+/* Botão principal com destaque especial */
+.load-option-btn.primary {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    font-size: 1.1em;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.load-option-btn.primary:hover {
+    background: linear-gradient(135deg, #45a049, #4CAF50);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
 /* Status de carregamento */
 .loading-status {
     background-color: #e3f2fd;

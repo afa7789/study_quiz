@@ -38,11 +38,41 @@ async function loadFlashcardsFromURL(url, source = 'URL') {
     }
 }
 
-// Carrega flashcards locais por padrão (silenciosamente)
-loadFlashcardsFromURL(LOCAL_FLASHCARDS_URL, 'arquivo local')
-    .catch(() => {
-        console.log('Arquivo local não encontrado, aguardando seleção manual...');
-    });
+// Função para carregar flashcards de forma inteligente (local -> GitHub)
+async function loadFlashcardsSmartly() {
+    try {
+        showLoadingStatus('Procurando flashcards locais...');
+        
+        // Primeiro tenta carregar do arquivo local
+        await loadFlashcardsFromURL(LOCAL_FLASHCARDS_URL, 'arquivo local');
+        
+    } catch (localError) {
+        console.log('Arquivo local não encontrado, tentando GitHub...', localError);
+        
+        try {
+            showLoadingStatus('Carregando do GitHub...');
+            await loadFlashcardsFromURL(GITHUB_FLASHCARDS_URL, 'GitHub');
+            
+        } catch (githubError) {
+            hideLoadingStatus();
+            console.error('Erro ao carregar de ambas as fontes:', { localError, githubError });
+            alert(`❌ Não foi possível carregar os flashcards de nenhuma fonte:
+            
+📁 Local: ${localError.message}
+🌐 GitHub: ${githubError.message}
+
+💡 Sugestões:
+• Use "Carregar Arquivo Personalizado" para selecionar um arquivo
+• Verifique sua conexão com a internet
+• Use uma URL personalizada`);
+        }
+    }
+}
+
+// Carrega flashcards automaticamente ao inicializar (silenciosamente)
+loadFlashcardsSmartly().catch(() => {
+    console.log('Carregamento inicial falhou, aguardando interação do usuário...');
+});
 
 
 let allFlashcards = []; // Armazenará todos os flashcards disponíveis
@@ -97,8 +127,6 @@ let averageTimeSpan;
 let wrongQuestionsList;
 
 // Novos elementos
-let loadDefaultBtn;
-let loadFromGithubBtn;
 let loadFromUrlBtn;
 let customUrlInput;
 let loadingStatus;
@@ -165,8 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wrongQuestionsList = document.getElementById('wrong-questions-list');
 
     // Novos elementos
-    loadDefaultBtn = document.getElementById('load-default-btn');
-    loadFromGithubBtn = document.getElementById('load-from-github-btn');
+    const loadSmartBtn = document.getElementById('load-smart-btn');
     loadFromUrlBtn = document.getElementById('load-from-url-btn');
     customUrlInput = document.getElementById('custom-url');
     loadingStatus = document.getElementById('loading-status');
@@ -176,15 +203,9 @@ document.addEventListener('DOMContentLoaded', () => {
     quizModeSelect = document.getElementById('quiz-mode');
 
     // Event Listeners
-    if (loadDefaultBtn) {
-        loadDefaultBtn.addEventListener('click', () => {
-            loadFlashcardsFromURL(LOCAL_FLASHCARDS_URL, 'flashcards padrão');
-        });
-    }
-
-    if (loadFromGithubBtn) {
-        loadFromGithubBtn.addEventListener('click', () => {
-            loadFlashcardsFromURL(GITHUB_FLASHCARDS_URL, 'GitHub');
+    if (loadSmartBtn) {
+        loadSmartBtn.addEventListener('click', () => {
+            loadFlashcardsSmartly();
         });
     }
 
@@ -345,28 +366,6 @@ function shuffleArray(array) {
 // Manter função antiga para compatibilidade
 function selectRandomFlashcards(num) {
     return selectFlashcards(num, 'random');
-}
-    if (num === 0 || num >= allFlashcards.length) {
-        // Se 0 ou mais do que o total, usa todos os flashcards e os embaralha
-        return shuffleArray([...allFlashcards]);
-    }
-
-    // Caso contrário, seleciona um número específico de flashcards aleatórios
-    const shuffled = shuffleArray([...allFlashcards]);
-    return shuffled.slice(0, num);
-}
-
-/**
- * Embaralha um array usando o algoritmo de Fisher-Yates.
- * @param {Array} array - O array a ser embaralhado.
- * @returns {Array} - O array embaralhado.
- */
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
 }
 
 /**
