@@ -54,8 +54,9 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* Fundamental para esconder elementos por padrão */
 .hidden {
-    display: none;
+    display: none !important; 
 }
 
 h2 {
@@ -256,7 +257,7 @@ button:disabled {
     border-radius: 6px;
     padding: 15px;
     margin: 15px 0;
-    display: flex;
+    display: flex; /* Garante que o spinner e a mensagem fiquem lado a lado */
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -294,6 +295,10 @@ button:disabled {
     padding: 10px;
     margin-top: 10px;
     border: 1px solid #4caf50;
+    display: flex; /* Garante que o ícone e o texto fiquem lado a lado */
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .flashcards-info small {

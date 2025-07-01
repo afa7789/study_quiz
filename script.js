@@ -3,135 +3,211 @@ const LOCAL_FLASHCARDS_URL = './flashcards.json';
 const GITHUB_PAGES_URL = 'https://afa7789.github.io/study_quiz/flashcards.json';
 const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/afa7789/study_quiz/refs/heads/master/flashcards.json';
 
-// Carrega flashcards padrão ao inicializar
+// Flashcards carregados e estado
 let exampleFlashcards = [];
-let isFlashcardsLoaded = false;
+let isFlashcardsLoaded = false; // Flag para indicar se os flashcards foram carregados com sucesso
 
-// Função para carregar flashcards de uma URL
+// --- Funções de UI (Gerenciamento de Visibilidade) ---
+
+/**
+ * Atualiza a exibição dos elementos de status de carregamento/informação.
+ * Esta é a única função responsável por manipular a visibilidade de #loading-status e #flashcards-info.
+ * @param {boolean} isLoading - True se o processo de carregamento está ativo.
+ * @param {number} flashcardsCount - Número de flashcards carregados (0 se não carregado ou erro).
+ * @param {string} [message='Carregando flashcards...'] - Mensagem a ser exibida no status de carregamento.
+ */
+function updateLoadingDisplay(isLoading, flashcardsCount = 0, message = 'Carregando flashcards...') {
+    const loadingStatus = document.getElementById('loading-status');
+    const flashcardsInfo = document.getElementById('flashcards-info');
+    const flashcardsCountElement = document.getElementById('flashcards-count');
+    const loadingMessageElement = document.getElementById('loading-message');
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+
+    // 1. Esconde ambos os elementos para garantir um estado limpo
+    if (loadingStatus) {
+        loadingStatus.classList.add('hidden');
+    }
+    if (flashcardsInfo) {
+        flashcardsInfo.classList.add('hidden');
+    }
+
+    // 2. Decide qual elemento mostrar
+    if (isLoading) {
+        // Se estiver carregando, mostra o status de carregamento
+        if (loadingStatus && loadingMessageElement) {
+            loadingMessageElement.textContent = message;
+            loadingStatus.classList.remove('hidden');
+        }
+        startQuizBtn.disabled = true; // Desabilita o botão enquanto carrega
+        console.log(`🔄 Estado: Carregando... (${message})`);
+    } else if (flashcardsCount > 0) {
+        // Se não está carregando E há flashcards carregados, mostra as informações
+        if (flashcardsInfo && flashcardsCountElement) {
+            flashcardsCountElement.textContent = flashcardsCount;
+            flashcardsInfo.classList.remove('hidden');
+        }
+        startQuizBtn.disabled = false; // Habilita o botão se carregado com sucesso
+        console.log(`📊 Estado: ${flashcardsCount} flashcards carregados`);
+    } else {
+        // Se não está carregando E não há flashcards (erro ou nenhum), ambos ficam escondidos
+        startQuizBtn.disabled = true; // Mantém o botão desabilitado
+        console.log('🚫 Estado: Nenhum flashcard carregado ou erro.');
+    }
+}
+
+// --- Funções de Carregamento de Dados ---
+
+/**
+ * Carrega os flashcards de uma URL específica.
+ * @param {string} url - A URL do arquivo JSON dos flashcards.
+ * @param {string} source - Uma string descritiva da fonte (ex: 'arquivo local', 'GitHub Pages').
+ * @param {boolean} [silent=false] - Se true, não mostra alertas de sucesso/erro.
+ * @returns {Promise<boolean>} - Resolve para true se o carregamento foi bem-sucedido, false caso contrário.
+ */
 async function loadFlashcardsFromURL(url, source = 'URL', silent = false) {
     try {
-        if (!silent) showLoadingStatus(`Carregando flashcards de ${source}...`);
-        
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
-        
+
         if (!Array.isArray(data) || !data.every(isValidFlashcard)) {
-            throw new Error('Formato de dados inválido');
+            throw new Error("Formato de dados inválido ou flashcards inválidos.");
         }
-        
+
         exampleFlashcards = data;
-        isFlashcardsLoaded = true;
-        
-        // Sempre esconde o loading após sucesso
-        hideLoadingStatus();
-        showFlashcardsInfo(data.length);
-        enableStartButton();
-        
+        isFlashcardsLoaded = true; // Define a flag de sucesso
+
+        // Atualiza a UI para o estado de "carregado"
+        updateLoadingDisplay(false, data.length);
+
         if (!silent) {
             alert(`✅ ${data.length} flashcards carregados com sucesso de ${source}!`);
-        } else {
-            console.log(`✅ ${data.length} flashcards carregados de ${source}`);
         }
-        
-        return true; // Indica sucesso
-        
+        return true;
+
     } catch (error) {
-        if (!silent) {
-            hideLoadingStatus();
-            console.error(`Erro ao carregar flashcards de ${source}:`, error);
-        }
-        throw error; // Re-throw para permitir que a função chamadora trate o erro
+        isFlashcardsLoaded = false; // Define a flag de falha
+        console.error(`Erro ao carregar flashcards de ${source}:`, error);
+        // Não chamamos updateLoadingDisplay(false, 0) aqui diretamente se for silent
+        // para permitir que loadFlashcardsSmartly gerencie o estado final de falha de todos os fallbacks.
+        throw error; // Re-lança o erro para ser pego por loadFlashcardsSmartly
     }
 }
 
-// Função para carregar flashcards com múltiplos fallbacks
+/**
+ * Tenta carregar flashcards de múltiplos fallbacks: local, GitHub Pages, GitHub Raw.
+ */
 async function loadFlashcardsSmartly() {
     const fallbacks = [
         { url: LOCAL_FLASHCARDS_URL, name: 'arquivo local' },
         { url: GITHUB_PAGES_URL, name: 'GitHub Pages' },
         { url: GITHUB_RAW_URL, name: 'GitHub Raw' }
     ];
-    
+
+    // Inicia o display de carregamento
+    updateLoadingDisplay(true, 0, 'Iniciando carregamento de flashcards...');
+
     for (let i = 0; i < fallbacks.length; i++) {
         const { url, name } = fallbacks[i];
         const isLast = i === fallbacks.length - 1;
-        
+
+        // Atualiza a mensagem do spinner para indicar a fonte atual da tentativa
+        const loadingMessageElement = document.getElementById('loading-message');
+        if (loadingMessageElement) {
+            loadingMessageElement.textContent = `Tentando carregar de ${name}...`;
+        }
+
         try {
-            showLoadingStatus(`Tentando carregar de ${name}...`);
-            await loadFlashcardsFromURL(url, name, true); // silent = true
+            // Tenta carregar. Usamos 'silent=true' para que loadFlashcardsFromURL
+            // não chame updateLoadingDisplay (escondendo o spinner) em cada tentativa.
+            await loadFlashcardsFromURL(url, name, true); 
             
-            // Se chegou aqui, carregou com sucesso
+            // Se chegou aqui, o carregamento foi bem-sucedido.
+            // loadFlashcardsFromURL já chamou updateLoadingDisplay para o estado final de sucesso.
             console.log(`✅ Flashcards carregados com sucesso de ${name}`);
-            return; // IMPORTANTE: Para aqui após sucesso
+            return; // Sai da função, pois carregamos com sucesso
             
         } catch (error) {
             console.log(`❌ Falha ao carregar de ${name}:`, error.message);
-            
             if (isLast) {
-                // Último fallback falhou - esconde loading e mostra erro
-                hideLoadingStatus();
-                alert(`❌ Não foi possível carregar os flashcards de nenhuma fonte:
-
-📁 Local: Arquivo não encontrado
-🌐 GitHub Pages: ${GITHUB_PAGES_URL}  
-📎 GitHub Raw: ${GITHUB_RAW_URL}
-
-💡 Sugestões:
-• Use "Carregar Arquivo Personalizado" para selecionar um arquivo
-• Verifique sua conexão com a internet
-• Use uma URL personalizada`);
+                // Se o último fallback falhou, atualiza a UI para indicar erro e mostra um alerta
+                updateLoadingDisplay(false, 0); // Define como não carregado
+                alert(`❌ Não foi possível carregar os flashcards de nenhuma fonte:\n\n📁 Local: Arquivo não encontrado\n🌐 GitHub Pages: ${GITHUB_PAGES_URL}\n📎 GitHub Raw: ${GITHUB_RAW_URL}\n\n💡 Sugestões:\n• Use "Carregar Arquivo Personalizado" para selecionar um arquivo\n• Verifique sua conexão com a internet\n• Use uma URL personalizada`);
             }
-            // Continua para o próximo fallback apenas se não for o último
+            // Se não é o último, o loop continua para a próxima tentativa
         }
     }
 }
 
-// Funções de interface (podem ser chamadas antes da inicialização)
-function showLoadingStatus(message) {
-    const loadingStatus = document.getElementById('loading-status');
-    const loadingMessage = document.getElementById('loading-message');
-    if (loadingStatus && loadingMessage) {
-        loadingMessage.textContent = message;
-        loadingStatus.classList.remove('hidden');
+/**
+ * Carrega os flashcards do arquivo JSON selecionado pelo usuário.
+ * @param {Event} event - O evento de mudança do input file.
+ */
+async function loadFlashcardsFromFile(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        // Se nenhum arquivo foi selecionado, restaura o display para o estado atual
+        updateLoadingDisplay(false, exampleFlashcards.length); // Assumindo que exampleFlashcards já tenha algum valor
+        return;
     }
+
+    // Inicia o display de carregamento
+    updateLoadingDisplay(true, 0, `Carregando arquivo ${file.name}...`);
+        
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const parsedData = JSON.parse(e.target.result);
+            if (Array.isArray(parsedData) && parsedData.every(isValidFlashcard)) {
+                exampleFlashcards = parsedData;
+                isFlashcardsLoaded = true;
+                
+                // Atualiza o display para o estado de "carregado"
+                updateLoadingDisplay(false, parsedData.length);
+                
+                alert(`✅ ${parsedData.length} flashcards carregados com sucesso do arquivo: ${file.name}`);
+            } else {
+                throw new Error('Formato de arquivo inválido ou flashcards inválidos.');
+            }
+        } catch (parseError) {
+            isFlashcardsLoaded = false;
+            // Atualiza o display para o estado de "não carregado/erro"
+            updateLoadingDisplay(false, 0, 'Erro ao analisar o JSON do arquivo.');
+            alert('❌ Erro ao analisar o JSON do arquivo. Verifique o formato.');
+            console.error('Parse error:', parseError);
+        }
+    };
+    reader.onerror = () => {
+        isFlashcardsLoaded = false;
+        // Atualiza o display para o estado de "não carregado/erro"
+        updateLoadingDisplay(false, 0, 'Erro ao ler o arquivo.');
+        alert('❌ Erro ao carregar o arquivo.');
+        console.error('File reading error:', reader.error);
+    };
+    reader.readAsText(file);
 }
 
-function hideLoadingStatus() {
-    const loadingStatus = document.getElementById('loading-status');
-    if (loadingStatus) {
-        loadingStatus.classList.add('hidden');
-    }
+// --- Funções de Validação ---
+
+/**
+ * Verifica se um objeto tem a estrutura mínima de um flashcard.
+ * @param {Object} flashcard - O objeto a ser validado.
+ * @returns {boolean} - True se for um flashcard válido, false caso contrário.
+ */
+function isValidFlashcard(flashcard) {
+    return (
+        typeof flashcard.pergunta === 'string' &&
+        typeof flashcard.resposta_certa === 'string' &&
+        typeof flashcard.respostas === 'object' &&
+        Object.keys(flashcard.respostas).length > 0
+    );
 }
 
-function showFlashcardsInfo(count) {
-    const flashcardsInfo = document.getElementById('flashcards-info');
-    const flashcardsCount = document.getElementById('flashcards-count');
-    if (flashcardsInfo && flashcardsCount) {
-        flashcardsCount.textContent = count;
-        flashcardsInfo.classList.remove('hidden');
-    }
-}
+// --- Funções do Quiz ---
 
-function enableStartButton() {
-    const startQuizBtn = document.getElementById('start-quiz-btn');
-    if (startQuizBtn) {
-        startQuizBtn.disabled = false;
-    }
-}
-
-function disableStartButton() {
-    const startQuizBtn = document.getElementById('start-quiz-btn');
-    if (startQuizBtn) {
-        startQuizBtn.disabled = true;
-    }
-}
-
-
-let allFlashcards = []; // Armazenará todos os flashcards disponíveis
 let quizFlashcards = []; // Flashcards selecionados para o quiz atual
 let currentQuestionIndex = 0;
 let correctAnswersCount = 0;
@@ -185,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
     averageTimeSpan = document.getElementById('average-time');
     wrongQuestionsList = document.getElementById('wrong-questions-list');
 
-    // Novos elementos
     const loadSmartBtn = document.getElementById('load-smart-btn');
     loadFromUrlBtn = document.getElementById('load-from-url-btn');
     customUrlInput = document.getElementById('custom-url');
@@ -193,9 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listeners
     if (loadSmartBtn) {
-        loadSmartBtn.addEventListener('click', () => {
-            loadFlashcardsSmartly();
-        });
+        loadSmartBtn.addEventListener('click', loadFlashcardsSmartly);
     }
 
     if (loadFromUrlBtn && customUrlInput) {
@@ -209,7 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event listener para Enter na URL
     if (customUrlInput) {
         customUrlInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -218,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event listeners principais
     if (flashcardFileInput) {
         flashcardFileInput.addEventListener('change', loadFlashcardsFromFile);
     }
@@ -231,83 +302,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (restartQuizBtn) {
         restartQuizBtn.addEventListener('click', showSetupSection);
     }
-
-    // Inicialização e carregamento automático
-    if (isFlashcardsLoaded) {
-        showFlashcardsInfo(exampleFlashcards.length);
-        enableStartButton();
-    } else {
-        disableStartButton();
-        // Carrega automaticamente quando a página for aberta
-        loadFlashcardsSmartly();
-    }
     
-    showSetupSection();
+    // Inicializa o estado da UI (todos escondidos por padrão)
+    // E inicia o carregamento automático dos flashcards.
+    updateLoadingDisplay(false, 0); // Garante que tudo começa escondido
+    loadFlashcardsSmartly(); // Inicia o carregamento automático no início
+    
+    showSetupSection(); // Garante que a seção de configuração esteja visível
 });
 
-// --- Funções de Inicialização e Carregamento ---
+// --- Funções de Seleção de Flashcards ---
 
 /**
- * Carrega os flashcards do arquivo JSON selecionado pelo usuário.
- * @param {Event} event - O evento de mudança do input file.
- */
-async function loadFlashcardsFromFile(event) {
-    const file = event.target.files[0];
-    if (!file) {
-        return;
-    }
-
-    try {
-        showLoadingStatus(`Carregando arquivo ${file.name}...`);
-        
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            try {
-                const parsedData = JSON.parse(e.target.result);
-                if (Array.isArray(parsedData) && parsedData.every(isValidFlashcard)) {
-                    exampleFlashcards = parsedData;
-                    isFlashcardsLoaded = true;
-                    
-                    hideLoadingStatus();
-                    showFlashcardsInfo(parsedData.length);
-                    enableStartButton();
-                    
-                    alert(`✅ ${parsedData.length} flashcards carregados com sucesso do arquivo: ${file.name}`);
-                } else {
-                    throw new Error('Formato de arquivo inválido');
-                }
-            } catch (parseError) {
-                hideLoadingStatus();
-                alert('❌ Erro ao analisar o JSON do arquivo. Verifique o formato.');
-                console.error('Parse error:', parseError);
-            }
-        };
-        reader.readAsText(file);
-    } catch (error) {
-        hideLoadingStatus();
-        alert('❌ Erro ao carregar o arquivo.');
-        console.error('File loading error:', error);
-    }
-}
-
-/**
- * Verifica se um objeto tem a estrutura mínima de um flashcard.
- * @param {Object} flashcard - O objeto a ser validado.
- * @returns {boolean} - True se for um flashcard válido, false caso contrário.
- */
-function isValidFlashcard(flashcard) {
-    return (
-        typeof flashcard.pergunta === 'string' &&
-        typeof flashcard.resposta_certa === 'string' &&
-        typeof flashcard.respostas === 'object' &&
-        Object.keys(flashcard.respostas).length > 0
-    );
-}
-
-/**
- * Seleciona flashcards baseado no modo escolhido
- * @param {number} num - Número de flashcards (0 para todos)
- * @param {string} mode - Modo de seleção: 'random', 'sequential', 'priority'
+ * Seleciona flashcards baseado no modo escolhido.
+ * @param {number} num - Número de flashcards (0 para todas).
+ * @param {string} mode - Modo de seleção: 'random', 'sequential', 'priority'.
+ * @returns {Array} - Array de flashcards selecionados.
  */
 function selectFlashcards(num, mode = 'random') {
     const source = exampleFlashcards;
@@ -323,8 +333,8 @@ function selectFlashcards(num, mode = 'random') {
             break;
             
         case 'priority':
-            // Prioriza perguntas que foram erradas antes (se houver histórico)
-            // Por agora, implementa como aleatório
+            // TODO: Implementar lógica de prioridade (ex: baseada em wrongQuestions de sessões anteriores)
+            // Por enquanto, implementa como aleatório
             selected = shuffleArray([...source]).slice(0, totalQuestions);
             break;
             
@@ -338,7 +348,9 @@ function selectFlashcards(num, mode = 'random') {
 }
 
 /**
- * Embaralha um array usando o algoritmo Fisher-Yates
+ * Embaralha um array usando o algoritmo Fisher-Yates.
+ * @param {Array} array - O array a ser embaralhado.
+ * @returns {Array} - Um novo array embaralhado.
  */
 function shuffleArray(array) {
     const shuffled = [...array];
@@ -349,11 +361,6 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-// Manter função antiga para compatibilidade
-function selectRandomFlashcards(num) {
-    return selectFlashcards(num, 'random');
-}
-
 /**
  * Exibe a seção de configuração do quiz e esconde as outras.
  */
@@ -361,11 +368,14 @@ function showSetupSection() {
     setupSection.classList.remove('hidden');
     quizSection.classList.add('hidden');
     resultsSection.classList.add('hidden');
+
+    // Ao voltar para a setup section, garanta que o status de carregamento/info seja restaurado
+    // com base no estado atual dos flashcards.
+    updateLoadingDisplay(false, exampleFlashcards.length); 
 }
 
 /**
  * Inicializa o quiz.
- * Pega o número de perguntas, seleciona os flashcards e exibe a primeira pergunta.
  */
 function startQuiz() {
     const numQuestions = parseInt(numQuestionsInput.value, 10);
@@ -381,7 +391,6 @@ function startQuiz() {
         return;
     }
 
-    // Seleciona flashcards baseado no modo
     quizFlashcards = selectFlashcards(numQuestions, quizMode);
     if (quizFlashcards.length === 0) {
         alert('Não foi possível selecionar perguntas. Verifique se há flashcards disponíveis.');
@@ -411,16 +420,15 @@ function startQuiz() {
 function displayCurrentFlashcard() {
     const flashcard = quizFlashcards[currentQuestionIndex];
     if (!flashcard) {
-        endQuiz(); // Se não há mais flashcards, termina o quiz
+        endQuiz();
         return;
     }
 
-    questionStartTime = Date.now(); // Inicia o timer para a pergunta atual
+    questionStartTime = Date.now();
 
     flashcardQuestionH3.textContent = flashcard.pergunta;
-    flashcardOptionsDiv.innerHTML = ''; // Limpa opções anteriores
+    flashcardOptionsDiv.innerHTML = '';
 
-    // Cria os botões de opção
     for (const key in flashcard.respostas) {
         const optionText = flashcard.respostas[key];
         const button = document.createElement('button');
@@ -432,7 +440,7 @@ function displayCurrentFlashcard() {
     }
 
     questionCounterSpan.textContent = `Pergunta ${currentQuestionIndex + 1}/${quizFlashcards.length}`;
-    nextQuestionBtn.disabled = true; // Desabilita o botão "Próxima Pergunta" até uma resposta ser selecionada
+    nextQuestionBtn.disabled = true;
 }
 
 /**
@@ -445,14 +453,12 @@ function handleAnswerClick(event) {
     const currentFlashcard = quizFlashcards[currentQuestionIndex];
     const correctAnswer = currentFlashcard.resposta_certa;
 
-    // Calcula o tempo gasto na pergunta
     const timeSpent = Date.now() - questionStartTime;
     questionTimes.push(timeSpent);
 
-    // Desabilita todos os botões de opção após uma seleção
     Array.from(flashcardOptionsDiv.children).forEach(btn => {
         btn.disabled = true;
-        btn.classList.add('selected'); // Adiciona classe para desativar hover e indicar seleção
+        btn.classList.add('selected');
     });
 
     if (userAnswer === correctAnswer) {
@@ -460,21 +466,19 @@ function handleAnswerClick(event) {
         selectedButton.classList.add('correct');
     } else {
         selectedButton.classList.add('wrong');
-        // Adiciona a pergunta errada à lista para exibição nos resultados
         wrongQuestions.push({
             question: currentFlashcard.pergunta,
             userAnswer: currentFlashcard.respostas[userAnswer],
             correctAnswer: currentFlashcard.respostas[correctAnswer]
         });
 
-        // Opcional: Destaca a resposta correta mesmo se o usuário errou
         Array.from(flashcardOptionsDiv.children).forEach(btn => {
             if (btn.dataset.answerKey === correctAnswer) {
                 btn.classList.add('correct');
             }
         });
     }
-    nextQuestionBtn.disabled = false; // Habilita o botão "Próxima Pergunta"
+    nextQuestionBtn.disabled = false;
 }
 
 /**
@@ -493,7 +497,7 @@ function nextQuestion() {
  * Finaliza o quiz e exibe os resultados.
  */
 function endQuiz() {
-    totalQuizTime = Date.now() - quizStartTime; // Calcula o tempo total do quiz
+    totalQuizTime = Date.now() - quizStartTime;
 
     quizSection.classList.add('hidden');
     resultsSection.classList.remove('hidden');
@@ -505,7 +509,6 @@ function endQuiz() {
     const averageTime = questionTimes.length > 0 ? totalTimeSpentOnQuestions / questionTimes.length : 0;
     averageTimeSpan.textContent = formatTime(averageTime);
 
-    // Exibe as perguntas erradas
     wrongQuestionsList.innerHTML = '';
     if (wrongQuestions.length === 0) {
         wrongQuestionsList.innerHTML = '<li>Parabéns! Você não errou nenhuma pergunta.</li>';
@@ -538,12 +541,12 @@ function formatTime(ms) {
 let quizTimerInterval;
 
 function startQuizTimerDisplay() {
-    clearInterval(quizTimerInterval); // Limpa qualquer timer anterior
+    clearInterval(quizTimerInterval);
     quizTimerInterval = setInterval(() => {
         const elapsed = Date.now() - quizStartTime;
         const timerSpan = document.getElementById('timer');
         if (timerSpan) {
             timerSpan.textContent = `Tempo: ${formatTime(elapsed)}`;
         }
-    }, 1000); // Atualiza a cada segundo
+    }, 1000);
 }
